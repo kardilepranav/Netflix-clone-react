@@ -16,8 +16,6 @@ function Navbar({ isScrolled }) {
 		{ name: 'My List', link: '/mylist' },
 	];
 
-	console.log(isScrolled);
-
 	const navigate = useNavigate();
 
 	useEffect(() => {
