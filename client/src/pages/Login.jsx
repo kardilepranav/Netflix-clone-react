@@ -24,12 +24,10 @@ function Login() {
 		}
 	};
 
-	useEffect(() => {
-		onAuthStateChanged(firebaseAuth, (currentUser) => {
-			if (currentUser) {
-				navigate('/');
-			}
-		});
+	onAuthStateChanged(firebaseAuth, (currentUser) => {
+		if (currentUser) {
+			navigate('/');
+		}
 	});
 
 	return (

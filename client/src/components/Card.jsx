@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import video from '../assets/video.mp4';
 import styled from 'styled-components';
@@ -10,10 +12,33 @@ import { RiThumbUpFill, RiThumbDownFill } from 'react-icons/ri';
 import { BsCheck } from 'react-icons/bs';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { BiChevronDown } from 'react-icons/bi';
+import { firebaseAuth } from '../utils/firebase-config';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export default React.memo(function Card({ movieData, isLiked = false }) {
 	const [isHovered, setIsHovered] = useState(false);
+	const [email, setEmail] = useState(undefined);
 	const navigate = useNavigate();
+
+	onAuthStateChanged(firebaseAuth, (currentUser) => {
+		if (currentUser) {
+			setEmail(currentUser.email);
+		} else {
+			navigate('/');
+		}
+	});
+
+	const addToList = async () => {
+		try {
+			await axios.post('http://localhost:3000/api/user/add', {
+				email,
+				data: movieData,
+			});
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
 	return (
 		<Container
 			onMouseEnter={() => setIsHovered(true)}
@@ -54,7 +79,7 @@ export default React.memo(function Card({ movieData, isLiked = false }) {
 								{isLiked ? (
 									<BsCheck title='Remove From List' />
 								) : (
-									<AiOutlinePlus title='Add to my List' />
+									<AiOutlinePlus title='Add to my List' onClick={addToList} />
 								)}
 							</div>
 							<div className='info'>
