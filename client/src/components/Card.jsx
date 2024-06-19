@@ -2,9 +2,10 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import video from '../assets/video.mp4';
 import styled from 'styled-components';
 import { IoPlayCircleSharp } from 'react-icons/io5';
@@ -14,17 +15,19 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import { BiChevronDown } from 'react-icons/bi';
 import { firebaseAuth } from '../utils/firebase-config';
 import { onAuthStateChanged } from 'firebase/auth';
+import { removeMovieFromLiked } from '../store';
 
 export default React.memo(function Card({ movieData, isLiked = false }) {
 	const [isHovered, setIsHovered] = useState(false);
 	const [email, setEmail] = useState(undefined);
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
 	onAuthStateChanged(firebaseAuth, (currentUser) => {
 		if (currentUser) {
 			setEmail(currentUser.email);
 		} else {
-			navigate('/');
+			navigate('/login');
 		}
 	});
 
@@ -77,7 +80,14 @@ export default React.memo(function Card({ movieData, isLiked = false }) {
 								<RiThumbUpFill title='Like' />
 								<RiThumbDownFill title='Dislike' />
 								{isLiked ? (
-									<BsCheck title='Remove From List' />
+									<BsCheck
+										title='Remove From List'
+										onClick={() =>
+											dispatch(
+												removeMovieFromLiked({ movieId: movieData.id, email })
+											)
+										}
+									/>
 								) : (
 									<AiOutlinePlus title='Add to my List' onClick={addToList} />
 								)}

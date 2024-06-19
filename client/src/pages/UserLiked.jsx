@@ -21,7 +21,7 @@ function UserLiked() {
 		if (currentUser) {
 			setEmail(currentUser.email);
 		} else {
-			navigate('/');
+			navigate('/login');
 		}
 	});
 
@@ -29,7 +29,7 @@ function UserLiked() {
 		if (email) {
 			dispatch(getUsersLikedMovies(email));
 		}
-	}, []);
+	}, [email]);
 
 	window.onscroll = () => {
 		setIsScrolled(window.pageYOffset === 0 ? false : true);
